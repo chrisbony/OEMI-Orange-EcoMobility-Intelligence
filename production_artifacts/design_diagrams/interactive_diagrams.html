@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Diagrammes de Conception - Christmas Party</title>
+  <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+  <style>
+    .diagram-panel { display: none; }
+    .diagram-panel.active { display: block; }
+    .entity-card { transition: all 0.2s ease-in-out; }
+    .entity-card:hover { transform: translateY(-2px); }
+  </style>
+</head>
+<body class="bg-transparent text-[var(--foreground)] antialiased p-3 sm:p-5">
+  <div class="bg-[var(--card)] text-[var(--foreground)] border border-[var(--border)] rounded-2xl p-5 shadow-lg max-w-5xl mx-auto">
+    
+    <!-- En-tête -->
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between pb-4 border-b border-[var(--border)] gap-3">
+      <div>
+        <div class="flex items-center gap-2">
+          <span class="text-2xl">🎄</span>
+          <h2 class="text-xl font-bold text-[var(--foreground)] tracking-tight">Conception Système, Événements & Rapports</h2>
+        </div>
+        <p class="text-xs text-[var(--muted-foreground)] mt-1">Conçu par <strong>The System Designer (@designer)</strong> & <strong>UX/UI Designer (@uiux)</strong></p>
+      </div>
+      
+      <!-- Badges de statut -->
+      <div class="flex items-center gap-2 text-xs">
+        <span class="px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-500 font-medium border border-emerald-500/20">Émargement Direct</span>
+        <span class="px-2.5 py-1 rounded-full bg-blue-500/10 text-blue-500 font-medium border border-blue-500/20">Export Excel & Texte</span>
+        <span class="px-2.5 py-1 rounded-full bg-purple-500/10 text-purple-500 font-medium border border-purple-500/20">MCP Google Stitch</span>
+      </div>
+    </div>
+
+    <!-- Barre de Navigation des Onglets -->
+    <div class="flex flex-wrap gap-2 mt-4 pb-2 border-b border-[var(--border)]" id="tabs-nav">
+      <button onclick="switchTab('events')" id="tab-btn-events" class="tab-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-[var(--primary)] text-[var(--primary-foreground)] shadow-sm">
+        📅 Événements & Émargement
+      </button>
+      <button onclick="switchTab('reports')" id="tab-btn-reports" class="tab-btn px-3 py-1.5 rounded-lg text-xs font-medium text-[var(--muted-foreground)] hover:bg-[var(--content)] hover:text-[var(--foreground)]">
+        📊 Moteur d'Export Rapports
+      </button>
+      <button onclick="switchTab('mcd')" id="tab-btn-mcd" class="tab-btn px-3 py-1.5 rounded-lg text-xs font-medium text-[var(--muted-foreground)] hover:bg-[var(--content)] hover:text-[var(--foreground)]">
+        📊 MCD Complet (9 Entités)
+      </button>
+      <button onclick="switchTab('mld')" id="tab-btn-mld" class="tab-btn px-3 py-1.5 rounded-lg text-xs font-medium text-[var(--muted-foreground)] hover:bg-[var(--content)] hover:text-[var(--foreground)]">
+        🗄️ MLD PostgreSQL Neon
+      </button>
+      <button onclick="switchTab('usecases')" id="tab-btn-usecases" class="tab-btn px-3 py-1.5 rounded-lg text-xs font-medium text-[var(--muted-foreground)] hover:bg-[var(--content)] hover:text-[var(--foreground)]">
+        🎯 Cas d'Utilisation
+      </button>
+      <button onclick="switchTab('pipeline')" id="tab-btn-pipeline" class="tab-btn px-3 py-1.5 rounded-lg text-xs font-medium text-[var(--muted-foreground)] hover:bg-[var(--content)] hover:text-[var(--foreground)]">
+        🔁 Équipe & MCP Stitch
+      </button>
+    </div>
+
+    <!-- CONTENU DES ONGLETS -->
+    <div class="mt-4">
+
+      <!-- 1. PANNEAU ÉVÉNEMENTS & ÉMARGEMENT -->
+      <div id="panel-events" class="diagram-panel active">
+        <div class="mb-3 flex items-center justify-between">
+          <span class="text-xs font-medium text-[var(--muted-foreground)]">Gestion des Événements & Vue Dédiée de Pointage de Présence</span>
+          <span class="text-xs px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-500 border border-emerald-500/20">Pointage 1 Clic</span>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mb-4">
+          <div class="p-3 rounded-xl bg-[var(--content)] border border-[var(--border)]">
+            <span class="text-xs font-bold text-amber-500 block mb-1">👑 Administrateur</span>
+            <p class="text-xs text-[var(--muted-foreground)]">Création d'événements pour toute l'organisation ou toute équipe ciblée.</p>
+          </div>
+          <div class="p-3 rounded-xl bg-[var(--content)] border border-[var(--border)]">
+            <span class="text-xs font-bold text-blue-500 block mb-1">⭐ Super Leader</span>
+            <p class="text-xs text-[var(--muted-foreground)]">Création d'événements pour toute l'organisation ou pour ses teams supervisées.</p>
+          </div>
+          <div class="p-3 rounded-xl bg-[var(--content)] border border-[var(--border)]">
+            <span class="text-xs font-bold text-emerald-500 block mb-1">🎖️ Leader</span>
+            <p class="text-xs text-[var(--muted-foreground)]">Création d'événements exclusivement restreints à sa propre team.</p>
+          </div>
+        </div>
+
+        <!-- Simulation Vue Émargement (UI Preview) -->
+        <div class="bg-[var(--content)] border border-[var(--border)] rounded-xl p-3.5">
+          <div class="flex items-center justify-between pb-2.5 mb-2.5 border-b border-[var(--border)]">
+            <div>
+              <span class="font-bold text-xs text-[var(--foreground)]">Vue Dédiée d'Émargement : Répétition Générale</span>
+              <span class="text-[11px] text-[var(--muted-foreground)] block">Samedi 12 Déc. 2026 • Salle Polyvalente</span>
+            </div>
+            <div class="flex gap-2 text-xs">
+              <span class="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 font-bold">18 Présents</span>
+              <span class="px-2 py-0.5 rounded bg-rose-500/20 text-rose-400 font-bold">2 Absents</span>
+              <span class="px-2 py-0.5 rounded bg-blue-500/20 text-blue-400 font-bold">90% Taux</span>
+            </div>
+          </div>
+
+          <div class="space-y-2 text-xs">
+            <div class="flex items-center justify-between p-2 rounded-lg bg-[var(--card)] border border-[var(--border)]">
+              <div class="flex items-center gap-2">
+                <span class="w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold text-[10px]">JD</span>
+                <div>
+                  <span class="font-bold text-[var(--foreground)]">Jean DUPONT</span>
+                  <span class="text-[11px] text-[var(--muted-foreground)] ml-2">Équipe Alpha (0701020304)</span>
+                </div>
+              </div>
+              <span class="px-2.5 py-1 rounded bg-emerald-500/20 text-emerald-400 font-bold text-[11px] flex items-center gap-1 cursor-pointer">
+                ✓ [PRÉSENT] <span class="text-[10px] text-emerald-300 font-normal">14h05</span>
+              </span>
+            </div>
+
+            <div class="flex items-center justify-between p-2 rounded-lg bg-[var(--card)] border border-[var(--border)]">
+              <div class="flex items-center gap-2">
+                <span class="w-6 h-6 rounded-full bg-purple-500/20 text-purple-400 flex items-center justify-center font-bold text-[10px]">MK</span>
+                <div>
+                  <span class="font-bold text-[var(--foreground)]">Marie KOUAME</span>
+                  <span class="text-[11px] text-[var(--muted-foreground)] ml-2">Équipe Alpha (0506070809)</span>
+                </div>
+              </div>
+              <span class="px-2.5 py-1 rounded bg-rose-500/20 text-rose-400 font-bold text-[11px] flex items-center gap-1 cursor-pointer">
+                ✗ [ABSENT]
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2. PANNEAU MOTEUR D'EXPORT RAPPORTS -->
+      <div id="panel-reports" class="diagram-panel">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <!-- Format Excel -->
+          <div class="bg-[var(--content)] border border-[var(--border)] rounded-xl p-3.5">
+            <div class="flex items-center justify-between mb-2 pb-2 border-b border-[var(--border)]">
+              <span class="text-xs font-bold text-emerald-500 flex items-center gap-1.5">📊 Format Excel (.xlsx / .csv)</span>
+              <span class="text-[11px] px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400">Complet & Structuré</span>
+            </div>
+            <p class="text-xs text-[var(--muted-foreground)] mb-3">Tableur avec en-têtes officiels, filtres et calculs automatiques de totaux.</p>
+            <div class="p-2.5 rounded bg-[var(--card)] border border-[var(--border)] font-mono text-[11px] space-y-1 text-[var(--muted-foreground)]">
+              <div class="text-[var(--foreground)] font-bold">| Nom | Prénom | Équipe | Statut | Heure Pointage |</div>
+              <div>| DUPONT | Jean | Alpha | PRÉSENT | 14:05:22 |</div>
+              <div>| KOUAME | Marie | Alpha | ABSENT | -- |</div>
+            </div>
+          </div>
+
+          <!-- Format Texte -->
+          <div class="bg-[var(--content)] border border-[var(--border)] rounded-xl p-3.5">
+            <div class="flex items-center justify-between mb-2 pb-2 border-b border-[var(--border)]">
+              <span class="text-xs font-bold text-blue-500 flex items-center gap-1.5">📋 Format Textuel (Liste à puces)</span>
+              <span class="text-[11px] px-2 py-0.5 rounded bg-blue-500/10 text-blue-400">Prêt à copier</span>
+            </div>
+            <p class="text-xs text-[var(--muted-foreground)] mb-3">Synthèse textuelle idéale pour partage WhatsApp, compte-rendu ou email.</p>
+            <div class="p-2.5 rounded bg-[var(--card)] border border-[var(--border)] font-mono text-[11px] space-y-1 text-[var(--muted-foreground)]">
+              <div class="text-[var(--foreground)] font-bold">Répétition Générale - 12 Déc. 2026 (Taux : 90%)</div>
+              <div>• [PRÉSENT] Jean DUPONT - Équipe Alpha (0701020304)</div>
+              <div>• [ABSENT] Marie KOUAME - Équipe Alpha (0506070809)</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-4 p-3 rounded-xl bg-[var(--content)] border border-[var(--border)] text-xs">
+          <span class="font-bold text-[var(--foreground)] block mb-1">🔍 Filtres Avancés d'Extraction :</span>
+          <p class="text-[var(--muted-foreground)]">Extraction par événement individuel, sélection groupée par plage de dates (du ... au ...), ou filtrage par équipe et statut financier (soldé / restant dû).</p>
+        </div>
+      </div>
+
+      <!-- 3. PANNEAU MCD COMPLET -->
+      <div id="panel-mcd" class="diagram-panel">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+          <div class="entity-card bg-[var(--content)] border border-[var(--border)] rounded-xl p-3">
+            <span class="font-bold text-xs text-indigo-400 block mb-1">📅 EVENT</span>
+            <ul class="text-xs space-y-1 text-[var(--muted-foreground)]">
+              <li><strong class="text-[var(--foreground)]"># id</strong>: UUID [PK]</li>
+              <li>• <strong>titre</strong>: VARCHAR</li>
+              <li>• <strong>date_debut, date_fin</strong>: TIMESTAMP</li>
+              <li>• <strong>type_portee</strong>: ORGANISATION | TEAM</li>
+              <li>• <strong>team_id</strong>: UUID [FK -> TEAM]</li>
+              <li>• <strong>created_by_id</strong>: UUID [FK -> USER]</li>
+            </ul>
+          </div>
+
+          <div class="entity-card bg-[var(--content)] border border-[var(--border)] rounded-xl p-3">
+            <span class="font-bold text-xs text-teal-400 block mb-1">📝 EVENT_ATTENDANCE</span>
+            <ul class="text-xs space-y-1 text-[var(--muted-foreground)]">
+              <li><strong class="text-[var(--foreground)]"># id</strong>: UUID [PK]</li>
+              <li>• <strong>event_id</strong>: UUID [FK -> EVENT]</li>
+              <li>• <strong>participant_id</strong>: UUID [FK -> PARTICIPANT]</li>
+              <li>• <strong>statut_presence</strong>: PRESENT | ABSENT</li>
+              <li>• <strong>checked_at</strong>: TIMESTAMP</li>
+              <li>• <strong>checked_by_id</strong>: UUID [FK -> USER]</li>
+            </ul>
+          </div>
+
+          <div class="entity-card bg-[var(--content)] border border-[var(--border)] rounded-xl p-3">
+            <span class="font-bold text-xs text-purple-400 block mb-1">🌸 PARTICIPANT (Bloomer)</span>
+            <ul class="text-xs space-y-1 text-[var(--muted-foreground)]">
+              <li><strong class="text-[var(--foreground)]"># id</strong>: UUID [PK]</li>
+              <li>• <strong>nom, prenom</strong>: VARCHAR</li>
+              <li>• <strong>photo_url</strong>: VARCHAR [Badge/Billet]</li>
+              <li>• <strong>team_id</strong>: UUID [FK -> TEAM]</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4. PANNEAU MLD -->
+      <div id="panel-mld" class="diagram-panel">
+        <div class="bg-[var(--content)] border border-[var(--border)] rounded-xl p-4 font-mono text-xs space-y-2">
+          <div class="p-2 rounded bg-[var(--card)] border border-[var(--border)]">
+            <span class="text-indigo-400 font-bold">event</span> (
+            <span class="underline text-blue-400 font-bold">id</span>, titre, description, date_debut, date_fin, lieu, type_portee, team_id#, created_by_id#, created_at
+            )
+          </div>
+          <div class="p-2 rounded bg-[var(--card)] border border-[var(--border)]">
+            <span class="text-teal-400 font-bold">event_attendance</span> (
+            <span class="underline text-blue-400 font-bold">id</span>, event_id#, participant_id#, statut_presence, checked_at, checked_by_id#
+            )
+          </div>
+          <div class="p-2 rounded bg-[var(--card)] border border-[var(--border)]">
+            <span class="text-blue-400 font-bold">user_account</span> (
+            <span class="underline text-blue-400 font-bold">id</span>, nom, prenom, email, password_hash, role#, photo_url, is_active, team_id#, participant_id#
+            )
+          </div>
+        </div>
+      </div>
+
+      <!-- 5. PANNEAU CAS D'UTILISATION -->
+      <div id="panel-usecases" class="diagram-panel">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
+          <div class="p-3 rounded-xl bg-[var(--content)] border border-[var(--border)]">
+            <span class="font-bold text-amber-500 block mb-2">👑 Admin & ⭐ Super Leader</span>
+            <ul class="space-y-1 text-[var(--muted-foreground)]">
+              <li>• Créer des événements pour toute l'organisation ou teams</li>
+              <li>• Rattacher des équipes entières ou des listes d'utilisateurs</li>
+              <li>• Émarger et exporter des rapports Excel & Texte multi-dates</li>
+            </ul>
+          </div>
+          <div class="p-3 rounded-xl bg-[var(--content)] border border-[var(--border)]">
+            <span class="font-bold text-emerald-500 block mb-2">🎖️ Leader</span>
+            <ul class="space-y-1 text-[var(--muted-foreground)]">
+              <li>• Créer des événements restreints à sa team</li>
+              <li>• Pointer la présence des bloomers de son équipe en 1 clic</li>
+              <li>• Exporter le rapport d'émargement de sa team</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- 6. PANNEAU PIPELINE & MCP STITCH -->
+      <div id="panel-pipeline" class="diagram-panel">
+        <div class="bg-[var(--content)] border border-[var(--border)] rounded-xl p-4 text-xs">
+          <div class="grid grid-cols-2 sm:grid-cols-6 gap-2 text-center mb-4">
+            <div class="p-2 rounded bg-[var(--card)] border border-[var(--border)]">
+              <span class="text-base">📋</span>
+              <div class="font-bold mt-1">@pm</div>
+              <div class="text-[10px] text-[var(--muted-foreground)]">Specs</div>
+            </div>
+            <div class="p-2 rounded bg-[var(--card)] border border-[var(--border)]">
+              <span class="text-base">📐</span>
+              <div class="font-bold mt-1">@designer</div>
+              <div class="text-[10px] text-[var(--muted-foreground)]">MCD/MLD</div>
+            </div>
+            <div class="p-2 rounded bg-[var(--card)] border border-[var(--border)]">
+              <span class="text-base">🎨</span>
+              <div class="font-bold mt-1">@uiux</div>
+              <div class="text-[10px] text-[var(--muted-foreground)]">Stitch UI</div>
+            </div>
+            <div class="p-2 rounded bg-[var(--card)] border border-[var(--border)]">
+              <span class="text-base">💻</span>
+              <div class="font-bold mt-1">@engineer</div>
+              <div class="text-[10px] text-[var(--muted-foreground)]">Code</div>
+            </div>
+            <div class="p-2 rounded bg-[var(--card)] border border-[var(--border)]">
+              <span class="text-base">🔍</span>
+              <div class="font-bold mt-1">@qa</div>
+              <div class="text-[10px] text-[var(--muted-foreground)]">Tests + Proofs</div>
+            </div>
+            <div class="p-2 rounded bg-[var(--card)] border border-[var(--border)]">
+              <span class="text-base">🚀</span>
+              <div class="font-bold mt-1">@devops</div>
+              <div class="text-[10px] text-[var(--muted-foreground)]">Connectivité</div>
+            </div>
+          </div>
+
+          <div class="p-3 rounded-lg bg-purple-500/10 border border-purple-500/20 text-purple-400 text-xs">
+            🎨 <strong>Intégration MCP Google Stitch :</strong> L'agent <code>@uiux</code> exploite le MCP Stitch pour générer des interfaces festives haute fidélité pour la vue d'émargement et les modales d'exportation de rapports.
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    function switchTab(tabId) {
+      document.querySelectorAll('.diagram-panel').forEach(p => p.classList.remove('active'));
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.remove('bg-[var(--primary)]', 'text-[var(--primary-foreground)]', 'font-semibold', 'shadow-sm');
+        btn.classList.add('text-[var(--muted-foreground)]', 'font-medium');
+      });
+
+      const targetPanel = document.getElementById('panel-' + tabId);
+      if (targetPanel) targetPanel.classList.add('active');
+
+      const targetBtn = document.getElementById('tab-btn-' + tabId);
+      if (targetBtn) {
+        targetBtn.classList.remove('text-[var(--muted-foreground)]', 'font-medium');
+        targetBtn.classList.add('bg-[var(--primary)]', 'text-[var(--primary-foreground)]', 'font-semibold', 'shadow-sm');
+      }
+    }
+  </script>
+</body>
+</html>

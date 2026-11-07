@@ -1,0 +1,126 @@
+# ==============================================================================
+# Orange EcoMobility Intelligence (OEMI) — Root .gitignore
+# ==============================================================================
+
+# ------------------------------------------------------------------------------
+# 1. Environment Variables & Secrets (CRITICAL SECURITY)
+# ------------------------------------------------------------------------------
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+*.env
+link_repo.txt
+credentials.json
+*.pem
+*.key
+
+# ------------------------------------------------------------------------------
+# 2. Teamwork & Agent Internal Metadata
+# ------------------------------------------------------------------------------
+# Ignore transient agent teamwork scratchpads, briefings, and handoffs
+.agents/teamwork/
+# Ignore legacy codelab template directory
+skills-codelab/
+# Ignore IDE agent state
+.gemini/
+
+# ------------------------------------------------------------------------------
+# 3. Python & Backend Scaffolding
+# ------------------------------------------------------------------------------
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual Environments
+.venv/
+venv/
+ENV/
+env/
+env.bak/
+venv.bak/
+
+# Testing & Quality Assurance
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+.nox/
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.mypy_cache/
+.ruff_cache/
+
+# ------------------------------------------------------------------------------
+# 4. Node.js & Next.js Frontend
+# ------------------------------------------------------------------------------
+node_modules/
+.pnp
+.pnp.js
+.yarn/install-state.gz
+
+# Next.js build output
+frontend/.next/
+.next/
+out/
+frontend/out/
+
+# Build artifacts & logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+*.log
+
+# Vercel & Turbo cache
+.vercel/
+.turbo/
+
+# ------------------------------------------------------------------------------
+# 5. Operating System & Editor Files
+# ------------------------------------------------------------------------------
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# IDE & Editor configurations
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+.idea/
+*.sublime-workspace
+*.sublime-project
+
+# Temporary / Scratch files
+*.tmp
+*.temp
+*~
