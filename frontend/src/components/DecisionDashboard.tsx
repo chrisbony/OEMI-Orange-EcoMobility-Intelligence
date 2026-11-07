@@ -1,7 +1,18 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import dynamic from "next/dynamic";
 import ThreeCanvas3D from "./ThreeCanvas3D";
+
+// Dynamically import LeafletMap with SSR disabled (Leaflet requires browser window)
+const LeafletMap = dynamic(() => import("./LeafletMap"), {
+  ssr: false,
+  loading: () => (
+    <div className="w-full h-[540px] rounded-2xl border border-slate-800 bg-slate-950 flex items-center justify-center text-slate-400 text-xs">
+      Chargement de la carte interactive Leaflet / OpenStreetMap...
+    </div>
+  ),
+});
 import {
   Building2,
   TrendingUp,
@@ -44,6 +55,7 @@ interface PredictionPoint {
 }
 
 export default function DecisionDashboard() {
+  const [mapViewMode, setMapViewMode] = useState<"LEAFLET" | "THREE_3D">("LEAFLET");
   const [communeFilter, setCommuneFilter] = useState<string>("Toutes");
   const [timeSlot, setTimeSlot] = useState<string>("07h-09h");
   const [sector, setSector] = useState<string>("SUPERMARCHE");
@@ -234,17 +246,55 @@ export default function DecisionDashboard() {
         </div>
       </div>
 
-      {/* Main Grid: 3D Visualization (Left) + Interactive Weight Tuner & Zone Card (Right) */}
+      {/* Main Grid: Map Visualization (Left) + Interactive Weight Tuner & Zone Card (Right) */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        {/* Left: 3D Three.js Cartographic Canvas (7 cols) */}
+        {/* Left: Map Cartographic Canvas (7 cols) */}
         <div className="lg:col-span-7 space-y-4">
-          <ThreeCanvas3D
-            zones={zones}
-            selectedZone={selectedZone}
-            onSelectZone={(z) => setSelectedZone(z)}
-          />
+          {/* Map Technology Switcher Tabs */}
+          <div className="flex items-center justify-between bg-slate-900/80 p-1.5 rounded-2xl border border-slate-800">
+            <div className="flex space-x-1">
+              <button
+                onClick={() => setMapViewMode("LEAFLET")}
+                className={`px-3.5 py-1.5 text-xs font-bold rounded-xl transition flex items-center space-x-2 ${
+                  mapViewMode === "LEAFLET"
+                    ? "bg-orange-500 text-white shadow-lg shadow-orange-500/30"
+                    : "text-slate-400 hover:text-slate-200 hover:bg-slate-800/50"
+                }`}
+              >
+                <span>🗺️ Carte Réelle Interactive (Leaflet / OpenStreetMap)</span>
+              </button>
+              <button
+                onClick={() => setMapViewMode("THREE_3D")}
+                className={`px-3.5 py-1.5 text-xs font-bold rounded-xl transition flex items-center space-x-2 ${
+                  mapViewMode === "THREE_3D"
+                    ? "bg-orange-500 text-white shadow-lg shadow-orange-500/30"
+                    : "text-slate-400 hover:text-slate-200 hover:bg-slate-800/50"
+                }`}
+              >
+                <span>🌐 Vue Volumétrique 3D (Three.js)</span>
+              </button>
+            </div>
+            <div className="text-[11px] text-slate-400 hidden sm:block pr-2">
+              {mapViewMode === "LEAFLET" ? "Tuiles réelles OSM / CartoDB" : "Extrusions & Piliers 3D WebGL"}
+            </div>
+          </div>
 
-          {/* Quick Metrics Bar below 3D Map */}
+          {/* Active Map View */}
+          {mapViewMode === "LEAFLET" ? (
+            <LeafletMap
+              zones={zones}
+              selectedZone={selectedZone}
+              onSelectZone={(z) => setSelectedZone(z)}
+            />
+          ) : (
+            <ThreeCanvas3D
+              zones={zones}
+              selectedZone={selectedZone}
+              onSelectZone={(z) => setSelectedZone(z)}
+            />
+          )}
+
+          {/* Quick Metrics Bar below Map */}
           <div className="grid grid-cols-3 gap-3">
             <div className="bg-slate-900/50 border border-slate-800 rounded-xl p-3 text-center">
               <div className="text-[11px] text-slate-400">Zones Analysées</div>
@@ -619,3 +669,4 @@ export default function DecisionDashboard() {
     </div>
   );
 }
+

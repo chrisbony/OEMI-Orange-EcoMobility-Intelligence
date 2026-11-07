@@ -57,3 +57,4 @@ export default function Navbar({ backendConnected }: NavbarProps) {
     </header>
   );
 }
+
