@@ -58,7 +58,7 @@ class JournalAudit(Base):
 
     __table_args__ = (
         CheckConstraint(
-            "action_type IN ('CONSULTATION', 'EXPORT_PDF', 'EXPORT_EXCEL')",
+            "action_type IN ('CONSULTATION', 'EXPORT_PDF', 'EXPORT_EXCEL', 'CALCUL_IPET', 'LOGIN', 'LOGOUT')",
             name="chk_action_type"
         ),
     )

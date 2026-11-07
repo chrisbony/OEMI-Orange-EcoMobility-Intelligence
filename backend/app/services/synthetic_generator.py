@@ -11,6 +11,7 @@ Conforms strictly to:
 import uuid
 import datetime
 import random
+import math
 from typing import List, Dict, Any, Optional, Tuple
 from dataclasses import dataclass
 
@@ -33,11 +34,14 @@ def apply_k_anonymity(volume_estime: Optional[float]) -> Tuple[Optional[float], 
     Applies strict k-anonymity masking according to Ivorian Law n° 2013-450.
     Returns (masked_volume, is_valid_k_anonymity).
     - If volume_estime >= 15.0: (round(volume_estime, 1), True)
-    - If volume_estime < 15.0 or None: (None, False)
+    - If volume_estime < 15.0 or None, NaN, Inf: (None, False)
     """
-    if volume_estime is None or volume_estime < K_ANONYMITY_THRESHOLD:
+    try:
+        if volume_estime is None or not math.isfinite(volume_estime) or volume_estime < K_ANONYMITY_THRESHOLD:
+            return None, False
+        return round(float(volume_estime), 1), True
+    except (ValueError, TypeError):
         return None, False
-    return round(float(volume_estime), 1), True
 
 
 # Territorial reference profiles with alias support

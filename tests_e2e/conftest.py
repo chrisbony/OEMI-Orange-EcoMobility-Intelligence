@@ -375,6 +375,7 @@ class OEMIContractClient:
             if date_start: params["date_start"] = date_start
             if date_end: params["date_end"] = date_end
             if plage_horaire: params["plage_horaire"] = plage_horaire
+            if force_low_volume: params["force_low_volume"] = True
             resp = requests.get(f"{self.backend_url}/api/mobility", params=params, timeout=5)
             if resp.status_code == 200:
                 return resp.json()

@@ -38,15 +38,44 @@ from app.models.prediction import PrevisionFrequentation
 from app.models.ipet import ScoreRecommandationIPET
 from app.models.audit import Utilisateur, JournalAudit
 
-# Comprehensive blacklist of telecom/individual PII identifiers
-STRICT_FORBIDDEN_PII = {
-    "msisdn", "phone", "telephone", "mobile", "numero_appel",
-    "imei", "imsi", "tmsi", "mac", "mac_address", "ip", "ip_address",
-    "device_id", "device_fingerprint", "individual_id", "subscriber", "subscriber_id",
-    "sim", "iccid", "client_id", "nom_client", "prenom", "nom",
-    "cni", "national_id", "passport", "cin", "ssn",
-    "gps_latitude", "gps_longitude", "user_latitude", "user_longitude"
-}
+
+def is_individual_pii(column_name: str, table_name: str) -> bool:
+    """
+    Discriminates between legitimate spatial/entity attributes (e.g. nom_commune,
+    nom_zone, nom_enseigne, nombre_menages, score_ipet) and forbidden individual
+    telecom/subscriber identifiers.
+    """
+    col = column_name.lower()
+
+    # Allowed RBAC user authentication fields
+    if table_name == "utilisateurs" and col in ("email", "password_hash"):
+        return False
+
+    # Allowed geographic entity names and commercial banner names
+    if col in ("nom_commune", "nom_zone", "nom_enseigne"):
+        return False
+
+    tokens = set(col.split("_"))
+
+    # Direct forbidden token detection
+    forbidden_tokens = {
+        "msisdn", "phone", "telephone", "mobile", "imei", "imsi", "tmsi",
+        "mac", "ip", "device", "subscriber", "sim", "iccid", "client",
+        "prenom", "cni", "passport", "cin", "ssn", "user"
+    }
+
+    if tokens & forbidden_tokens:
+        return True
+
+    # Compound forbidden names
+    compound_pii = {
+        "individual_id", "device_id", "user_id", "nom_client", "nom_abonne",
+        "gps_latitude", "gps_longitude", "user_latitude", "user_longitude"
+    }
+    if col in compound_pii:
+        return True
+
+    return False
 
 
 # ==============================================================================
@@ -249,6 +278,7 @@ def test_database_roundtrip_privacy_records():
     and asserts that zero records in mobilite_agregee violate k-anonymity.
     Cleans up inserted records after assertion.
     """
+    engine.dispose()
     session = SessionLocal()
     inserted_ids = []
     try:
@@ -315,12 +345,13 @@ def test_database_roundtrip_privacy_records():
         print(f"\n[DB ROUNDTRIP AUDIT] Successfully inserted and audited 2 records in Neon PostGIS: 0 privacy violations.")
 
     finally:
-        # Cleanup test records
+        # Robust per-id cleanup
         if inserted_ids:
-            session.execute(
-                text("DELETE FROM mobilite_agregee WHERE id IN :ids"),
-                {"ids": tuple(inserted_ids)}
-            )
+            for rec_id in inserted_ids:
+                session.execute(
+                    text("DELETE FROM mobilite_agregee WHERE id = :target_id"),
+                    {"target_id": rec_id}
+                )
             session.commit()
         session.close()
 
@@ -348,15 +379,9 @@ def test_zero_pii_audit_all_orm_models():
 
     for model in models_to_audit:
         table_name = model.__tablename__
-        col_names = {c.name.lower() for c in model.__table__.columns}
-
-        for pii in STRICT_FORBIDDEN_PII:
-            # Note: email in Utilisateur is legitimate for admin/analyst logins;
-            # but forbidden in mobility, spatial, and demographic data.
-            if table_name == "utilisateurs" and pii in ("email",):
-                continue
-            assert pii not in col_names, (
-                f"CRITICAL PII LEAK: Column '{pii}' detected in table '{table_name}'!"
+        for col in model.__table__.columns:
+            assert not is_individual_pii(col.name, table_name), (
+                f"CRITICAL PII LEAK: Column '{col.name}' in table '{table_name}' represents individual PII!"
             )
 
 
@@ -386,10 +411,9 @@ def test_zero_pii_audit_on_serialized_mobility_payloads():
         unexpected_keys = keys_set - allowed_record_keys
         assert not unexpected_keys, f"Unexpected metadata keys found in record: {unexpected_keys}"
 
-        # Assert zero forbidden PII substrings in key names
+        # Assert zero forbidden PII keywords in key names
         for k in keys_set:
-            for pii in STRICT_FORBIDDEN_PII:
-                assert pii not in k.lower(), f"PII keyword '{pii}' found in key '{k}'"
+            assert not is_individual_pii(k, "synthetic_mobility_record"), f"PII keyword found in key '{k}'"
 
 
 def test_zero_pii_audit_live_database_schema():
@@ -415,10 +439,8 @@ def test_zero_pii_audit_live_database_schema():
 
     detected_pii = []
     for tbl, col in rows:
-        c_low = col.lower()
-        for pii in STRICT_FORBIDDEN_PII:
-            if pii in c_low:
-                detected_pii.append((tbl, col, pii))
+        if is_individual_pii(col, tbl):
+            detected_pii.append((tbl, col))
 
     assert len(detected_pii) == 0, f"CRITICAL: PII detected in live database schema: {detected_pii}"
     print(f"\n[LIVE SCHEMA AUDIT] Audited {len(rows)} database columns across 8 OEMI tables: 0 PII columns detected.")

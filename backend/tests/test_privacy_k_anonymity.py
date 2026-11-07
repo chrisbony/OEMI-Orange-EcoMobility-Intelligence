@@ -79,6 +79,19 @@ def test_k_anonymity_boundary_values():
     assert ok is False
     assert val is None
 
+    # Non-finite float values (NaN, +Inf, -Inf) must be strictly rejected
+    val, ok = apply_k_anonymity(float("nan"))
+    assert ok is False
+    assert val is None
+
+    val, ok = apply_k_anonymity(float("inf"))
+    assert ok is False
+    assert val is None
+
+    val, ok = apply_k_anonymity(float("-inf"))
+    assert ok is False
+    assert val is None
+
 
 def test_zero_pii_audit_on_records(generator):
     """Verifies that no Personally Identifiable Information (PII) is present on mobility records."""
